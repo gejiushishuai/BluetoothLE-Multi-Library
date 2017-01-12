@@ -41,7 +41,6 @@ import android.os.ParcelUuid;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-
 import com.github.qindachang.library.exception.BleException;
 import com.github.qindachang.library.exception.ConnBleException;
 import com.github.qindachang.library.exception.ReadBleException;
@@ -67,7 +66,7 @@ import java.util.UUID;
 import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 
 
-/* package */ class BleManager {
+/* package */ class BleManager extends BleManagerImpl{
 
     private static final String TAG = BleManager.class.getSimpleName();
 
@@ -121,16 +120,18 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    BleManager(Context context) {
-        mContext = context;
-    }
 
-    BleManager(Context context, BluetoothConfig config) {
-        mContext = context;
-        queueDelayTime = config.getQueueDelayTime();
-        enableQueueDelay = config.getEnableQueueDelay();
-        enableLogger = config.getEnableLogger();
-    }
+
+//    BleManager(Context context) {
+//        mContext = context;
+//    }
+//
+//    BleManager(Context context, BluetoothConfig config) {
+//        mContext = context;
+//        queueDelayTime = config.getQueueDelayTime();
+//        enableQueueDelay = config.getEnableQueueDelay();
+//        enableLogger = config.getEnableLogger();
+//    }
 
     public void setConfig(BluetoothConfig config) {
         queueDelayTime = config.getQueueDelayTime();
@@ -138,17 +139,17 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         enableLogger = config.getEnableLogger();
     }
 
-    boolean isSupportBluetooth() {
+    public boolean isSupportBluetooth() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return bluetoothAdapter != null;
     }
 
-    boolean isBluetoothOpen() {
+    public boolean isBluetoothOpen() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return bluetoothAdapter.isEnabled();
     }
 
-    boolean enableBluetooth(Activity activity) {
+    public boolean enableBluetooth(Activity activity) {
         synchronized (BleManager.class) {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter == null) {
@@ -165,7 +166,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    boolean enableBluetooth(Activity activity,int requestCode) {
+    public boolean enableBluetooth(Activity activity,int requestCode) {
         synchronized (BleManager.class) {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter == null) {
@@ -182,7 +183,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    boolean disableBluetooth() {
+    public boolean disableBluetooth() {
         synchronized (BleManager.class) {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter.isEnabled()) {
@@ -207,7 +208,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    boolean clearDeviceCache() {
+    public boolean clearDeviceCache() {
         synchronized (BleManager.class) {
             if (mBluetoothGatt == null) {
                 BleLogger.e(enableLogger, TAG, "please connected bluetooth then clear cache.");
@@ -227,7 +228,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    boolean addLeListenerList(LeListener leListener) {
+    public boolean addLeListenerList(LeListener leListener) {
         return mListenerList.add(leListener);
     }
 
@@ -235,7 +236,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         mOnLeScanListener = onLeScanListener;
     }
 
-    void scan(Activity activity, List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
+    public void scan(Activity activity, List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
               int scanPeriod, int reportDelayMillis) {
         BleLogger.d(enableLogger, TAG, "bluetooth le scanning...");
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -289,7 +290,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }, SCAN_DURATION);
     }
 
-    void stopScan() {
+    public void stopScan() {
         if (isScanning) {
             final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
             scanner.stopScan(scanCallback);
@@ -307,7 +308,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
     }
 
 
-    boolean scanning() {
+    public boolean scanning() {
         return isScanning;
     }
 
