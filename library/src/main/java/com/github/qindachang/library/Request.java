@@ -60,8 +60,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
         return new Request(Type.READ, characteristic);
     }
 
-    public static Request newWriteRequest(final BluetoothGattCharacteristic characteristic, byte[] bytes) {
-        return new Request(Type.WRITE, characteristic, bytes);
+    public static Request newWriteRequest(final BluetoothGattCharacteristic characteristic) {
+        return new Request(Type.WRITE, characteristic);
     }
 
     public static Request newEnableNotificationsRequest(final boolean enable, final BluetoothGattCharacteristic characteristic) {

@@ -63,7 +63,7 @@ import java.util.UUID;
 import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 
 
-/* package */ class BleManager extends BleManagerImpl{
+/* package */ class BleManager extends BleManagerImpl {
 
     private static final String TAG = BleManager.class.getSimpleName();
 
@@ -102,12 +102,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
     private BluetoothGatt mBluetoothGatt;
     private ConnParameters mConnParameters = new ConnParameters();
 
-    private OnLeScanListener mOnLeScanListener;
-    private OnLeConnectListener mOnLeConnectListener;
-    private OnLeNotificationListener mOnLeNotificationListener;
-    private OnLeWriteCharacteristicListener mOnLeWriteCharacteristicListener;
-    private OnLeReadCharacteristicListener mOnLeReadCharacteristicListener;
-
     private RequestQueue mRequestQueue = new RequestQueue();
     private Set<LeListener> mListenerList = new LinkedHashSet<>();
 
@@ -118,8 +112,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
 
-
-//    BleManager(Context context) {
+    //    BleManager(Context context) {
 //        mContext = context;
 //    }
 //
@@ -129,23 +122,26 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 //        enableQueueDelay = config.getEnableQueueDelay();
 //        enableLogger = config.getEnableLogger();
 //    }
-
+    @Override
     public void setConfig(BluetoothConfig config) {
         queueDelayTime = config.getQueueDelayTime();
         enableQueueDelay = config.getEnableQueueDelay();
         enableLogger = config.getEnableLogger();
     }
 
+    @Override
     public boolean isSupportBluetooth() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return bluetoothAdapter != null;
     }
 
+    @Override
     public boolean isBluetoothOpen() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return bluetoothAdapter.isEnabled();
     }
 
+    @Override
     public boolean enableBluetooth(Activity activity) {
         synchronized (BleManager.class) {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -163,7 +159,8 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    public boolean enableBluetooth(Activity activity,int requestCode) {
+    @Override
+    public boolean enableBluetooth(Activity activity, int requestCode) {
         synchronized (BleManager.class) {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter == null) {
@@ -180,6 +177,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
+    @Override
     public boolean disableBluetooth() {
         synchronized (BleManager.class) {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -205,6 +203,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
+    @Override
     public boolean clearDeviceCache() {
         synchronized (BleManager.class) {
             if (mBluetoothGatt == null) {
@@ -229,41 +228,43 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         return mListenerList.add(leListener);
     }
 
-    void setOnLeScanListener(OnLeScanListener onLeScanListener) {
-        mOnLeScanListener = onLeScanListener;
-    }
-
     private List<String> filterDeviceNameList = new ArrayList<>();
     private List<String> filterDeviceAddressList = new ArrayList<>();
     private List<UUID> filerServiceUUIDList = new ArrayList<>();
     private int scanPeriod = 10000;
     private int reportDelayMillis;
 
+    @Override
     public BleManager setScanWithDeviceName(String deviceName) {
         this.filterDeviceNameList.add(deviceName);
         return this;
     }
 
+    @Override
     public BleManager setScanWithDeviceName(String[] deviceNames) {
         Collections.addAll(this.filterDeviceNameList, deviceNames);
         return this;
     }
 
+    @Override
     public BleManager setScanWithDeviceAddress(String deviceAddress) {
         this.filterDeviceAddressList.add(deviceAddress);
         return this;
     }
 
+    @Override
     public BleManager setScanWithDeviceAddress(String[] deviceAddress) {
         Collections.addAll(this.filterDeviceAddressList, deviceAddress);
         return this;
     }
 
+    @Override
     public BleManager setScanWithServiceUUID(String serviceUUID) {
         setScanWithServiceUUID(UUID.fromString(serviceUUID));
         return this;
     }
 
+    @Override
     public BleManager setScanWithServiceUUID(String[] serviceUUIDs) {
         for (String serviceUUID : serviceUUIDs) {
             setScanWithServiceUUID(UUID.fromString(serviceUUID));
@@ -271,32 +272,37 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         return this;
     }
 
+    @Override
     public BleManager setScanWithServiceUUID(UUID serviceUUID) {
         this.filerServiceUUIDList.add(serviceUUID);
         return this;
     }
 
+    @Override
     public BleManager setScanWithServiceUUID(UUID[] serviceUUIDs) {
         Collections.addAll(this.filerServiceUUIDList, serviceUUIDs);
         return this;
     }
 
+    @Override
     public BleManager setScanPeriod(int millisecond) {
         this.scanPeriod = millisecond;
         return this;
     }
 
+    @Override
     public BleManager setReportDelay(int reportDelayMillis) {
         this.reportDelayMillis = reportDelayMillis;
         return this;
     }
 
+    @Override
     public void scan() {
         scan(filterDeviceNameList, filterDeviceAddressList, filerServiceUUIDList, scanPeriod, reportDelayMillis);
     }
 
     private void scan(List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
-              int scanPeriod, int reportDelayMillis) {
+                      int scanPeriod, int reportDelayMillis) {
         BleLogger.d(enableLogger, TAG, "bluetooth le scanning...");
 //        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
 //                != PackageManager.PERMISSION_GRANTED) {
@@ -349,6 +355,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }, SCAN_DURATION);
     }
 
+    @Override
     public void stopScan() {
         if (isScanning) {
             final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
@@ -359,18 +366,16 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                     ((OnLeScanListener) leListener).onScanCompleted();
                 }
             }
-            if (mOnLeScanListener != null) {
-                mOnLeScanListener.onScanCompleted();
-            }
             BleLogger.d(enableLogger, TAG, "bluetooth le scan has stop.");
         }
     }
 
-
+    @Override
     public boolean getScanning() {
         return isScanning;
     }
 
+    @Override
     public BleManager setStopScanAfterConnected(boolean stop) {
         isStopScanAfterConnected = stop;
         return this;
@@ -384,9 +389,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                     ((OnLeScanListener) leListener).onScanResult(result.getDevice(), result.getRssi(), result.getScanRecord());
                 }
             }
-            if (mOnLeScanListener != null) {
-                mOnLeScanListener.onScanResult(result.getDevice(), result.getRssi(), result.getScanRecord());
-            }
         }
 
         @Override
@@ -395,9 +397,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                 if (leListener instanceof OnLeScanListener) {
                     ((OnLeScanListener) leListener).onBatchScanResults(results);
                 }
-            }
-            if (mOnLeScanListener != null) {
-                mOnLeScanListener.onBatchScanResults(results);
             }
         }
 
@@ -409,33 +408,34 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                             new ScanBleException(errorCode, BleException.SCAN));
                 }
             }
-            if (mOnLeScanListener != null) {
-                mOnLeScanListener.onScanFailed(
-                        new ScanBleException(errorCode, BleException.SCAN));
-            }
         }
     };
 
+    @Override
     public BleManager setRetryConnectEnable(boolean retryConnectEnable) {
         mRetryConnectEnable = retryConnectEnable;
         return this;
     }
 
+    @Override
     public BleManager setConnectTimeoutMillis(int connectTimeoutMillis) {
         this.connectTimeoutMillis = connectTimeoutMillis;
         return this;
     }
 
+    @Override
     public BleManager setServiceTimeoutMillis(int serviceTimeoutMillis) {
         this.serviceTimeoutMillis = serviceTimeoutMillis;
         return this;
     }
 
+    @Override
     public BleManager setRetryConnectCount(int retryConnectCount) {
         mRetryConnectCount = retryConnectCount;
         return this;
     }
 
+    @Override
     public boolean connect(boolean autoConnect, final BluetoothDevice device) {
         mAutoConnect = autoConnect;
         mBluetoothDevice = device;
@@ -458,10 +458,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                             new ConnBleException(0, BleException.CONNECT, "Bluetooth has been connected. connect false."));
                 }
             }
-            if (mOnLeConnectListener != null) {
-                mOnLeConnectListener.onDeviceConnectFail(
-                        new ConnBleException(0, BleException.CONNECT, "Bluetooth has been connected. connect false."));
-            }
             return false;
         }
         if (mBluetoothGatt != null) {
@@ -482,16 +478,14 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                 ((OnLeConnectListener) leListener).onDeviceConnecting();
             }
         }
-        if (mOnLeConnectListener != null) {
-            mOnLeConnectListener.onDeviceConnecting();
-        }
 
         checkConnected();
 
         return true;
     }
 
-    BluetoothDevice getBluetoothDevice() {
+    @Override
+    public BluetoothDevice getBluetoothDevice() {
         if (mConnected) {
             return mBluetoothDevice;
         } else
@@ -517,16 +511,14 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    boolean getConnected() {
+    @Override
+    public boolean getConnected() {
         return mConnected;
     }
 
-    boolean getServicesDiscovered() {
+    @Override
+    public boolean getServicesDiscovered() {
         return mServiceDiscovered;
-    }
-
-    void setConnectListener(OnLeConnectListener onLeConnectListener) {
-        mOnLeConnectListener = onLeConnectListener;
     }
 
     private boolean enableNotification(boolean enable, BluetoothGattCharacteristic characteristic) {
@@ -586,7 +578,8 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    void enableNotificationQueue(boolean enable, UUID serviceUUID, UUID[] characteristicUUIDs) {
+    @Override
+    public void enableNotifications(boolean enable, UUID serviceUUID, UUID[] characteristicUUIDs) {
         if (mBluetoothGatt == null) {
             for (LeListener leListener : mListenerList) {
                 if (leListener instanceof OnLeNotificationListener) {
@@ -623,10 +616,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                 }
             }
         }
-    }
-
-    void setOnLeNotificationListener(OnLeNotificationListener onLeNotificationListener) {
-        this.mOnLeNotificationListener = onLeNotificationListener;
     }
 
     private boolean enableIndication(boolean enable, BluetoothGattCharacteristic characteristic) {
@@ -686,7 +675,8 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    void enableIndicationQueue(boolean enable, UUID serviceUUID, UUID[] characteristicUUIDs) {
+    @Override
+    public void enableIndicates(boolean enable, UUID serviceUUID, UUID[] characteristicUUIDs) {
         if (mBluetoothGatt == null) {
             for (LeListener leListener : mListenerList) {
                 if (leListener instanceof OnLeIndicationListener) {
@@ -728,7 +718,8 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    void writeCharacteristicQueue(byte[] bytes, UUID serviceUUID, UUID characteristicUUID) {
+    @Override
+    public void writeBytesToCharacteristic(byte[] bytes, UUID serviceUUID, UUID characteristicUUID) {
         if (mBluetoothGatt == null) {
             for (LeListener leListener : mListenerList) {
                 if (leListener instanceof OnLeWriteCharacteristicListener) {
@@ -773,7 +764,8 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                     }
                 }
             } else {
-                mRequestQueue.addRequest(Request.newWriteRequest(characteristic, bytes));
+                characteristic.setValue(bytes);
+                mRequestQueue.addRequest(Request.newWriteRequest(characteristic));
             }
         } else {
             for (LeListener leListener : mListenerList) {
@@ -787,7 +779,35 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    private boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+    @Override
+    public BluetoothGattCharacteristic getCharacteristic(UUID serviceUUID, UUID characteristicUUID) {
+        BluetoothGattService service = mBluetoothGatt.getService(serviceUUID);
+        if (service == null) {
+            return null;
+        }
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(characteristicUUID);
+        if (characteristic == null) {
+            return null;
+        }
+        return characteristic;
+    }
+
+    @Override
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        if (characteristic == null) {
+            for (LeListener leListener : mListenerList) {
+                if (leListener instanceof OnLeWriteCharacteristicListener) {
+                    ((OnLeWriteCharacteristicListener) leListener).onFailed(
+                            new WriteBleException(233, BleException.WRITE_CHARACTERISTIC, "characteristic is null"));
+                }
+            }
+            return;
+        }
+        mRequestQueue.addRequest(Request.newWriteRequest(characteristic));
+    }
+
+
+    private boolean write2Characteristic(BluetoothGattCharacteristic characteristic) {
         final BluetoothGatt gatt = mBluetoothGatt;
         if (gatt == null) {
             for (LeListener leListener : mListenerList) {
@@ -826,14 +846,12 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
             mRequestQueue.next();
             return false;
         }
+
         return gatt.writeCharacteristic(characteristic);
     }
 
-    void setWriteCharacteristicListener(OnLeWriteCharacteristicListener onLeWriteCharacteristicListener) {
-        mOnLeWriteCharacteristicListener = onLeWriteCharacteristicListener;
-    }
-
-    void readCharacteristicQueue(UUID serviceUUID, UUID characteristicUUID) {
+    @Override
+    public void readCharacteristic(UUID serviceUUID, UUID characteristicUUID) {
         if (mBluetoothGatt == null) {
             for (LeListener leListener : mListenerList) {
                 if (leListener instanceof OnLeReadCharacteristicListener) {
@@ -872,7 +890,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    private boolean readCharacteristic(BluetoothGattCharacteristic characteristic) {
+    private boolean read2Characteristic(BluetoothGattCharacteristic characteristic) {
         final BluetoothGatt gatt = mBluetoothGatt;
         if (gatt == null) {
             for (LeListener leListener : mListenerList) {
@@ -913,10 +931,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
             return false;
         }
         return gatt.readCharacteristic(characteristic);
-    }
-
-    void setOnLeReadCharacteristicListener(OnLeReadCharacteristicListener onLeReadCharacteristicListener) {
-        mOnLeReadCharacteristicListener = onLeReadCharacteristicListener;
     }
 
     void readRssi() {
@@ -994,7 +1008,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         if (mBluetoothGatt == null) {
             return;
         }
-        readCharacteristicQueue(SERVICE, PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS_UUID);
+        readCharacteristic(SERVICE, PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS_UUID);
     }
 
     ConnParameters getConnParameters() {
@@ -1020,9 +1034,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                             if (leListener instanceof OnLeConnectListener) {
                                 ((OnLeConnectListener) leListener).onDeviceConnected();
                             }
-                        }
-                        if (mOnLeConnectListener != null) {
-                            mOnLeConnectListener.onDeviceConnected();
                         }
                     }
                 });
@@ -1056,9 +1067,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                             if (leListener instanceof OnLeConnectListener) {
                                 ((OnLeConnectListener) leListener).onDeviceDisconnected();
                             }
-                        }
-                        if (mOnLeConnectListener != null) {
-                            mOnLeConnectListener.onDeviceDisconnected();
                         }
                     }
                 });
@@ -1095,9 +1103,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                             if (leListener instanceof OnLeConnectListener) {
                                 ((OnLeConnectListener) leListener).onServicesDiscovered(gatt);
                             }
-                        }
-                        if (mOnLeConnectListener != null) {
-                            mOnLeConnectListener.onServicesDiscovered(gatt);
                         }
                     }
                 });
@@ -1136,9 +1141,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                                     ((OnLeReadCharacteristicListener) leListener).onSuccess(characteristic);
                                 }
                             }
-                            if (mOnLeReadCharacteristicListener != null) {
-                                mOnLeReadCharacteristicListener.onSuccess(characteristic);
-                            }
                         }
                     });
                 }
@@ -1154,10 +1156,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                                         new ReadBleException(status, BleException.READ_CHARACTERISTIC, "Phone has lost bonding information."));
                             }
                         }
-                        if (mOnLeReadCharacteristicListener != null) {
-                            mOnLeReadCharacteristicListener.onFailure(
-                                    new ReadBleException(status, BleException.READ_CHARACTERISTIC, "Phone has lost bonding information."));
-                        }
                     }
                 });
 
@@ -1171,10 +1169,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                                 ((OnLeReadCharacteristicListener) leListener).onFailure(
                                         new ReadBleException(status, BleException.READ_CHARACTERISTIC, "Error on reading characteristic."));
                             }
-                        }
-                        if (mOnLeReadCharacteristicListener != null) {
-                            mOnLeReadCharacteristicListener.onFailure(
-                                    new ReadBleException(status, BleException.READ_CHARACTERISTIC, "Error on reading characteristic."));
                         }
                     }
                 });
@@ -1197,9 +1191,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                                 ((OnLeWriteCharacteristicListener) leListener).onSuccess(characteristic);
                             }
                         }
-                        if (mOnLeWriteCharacteristicListener != null) {
-                            mOnLeWriteCharacteristicListener.onSuccess(characteristic);
-                        }
                     }
                 });
 
@@ -1214,10 +1205,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                                         new WriteBleException(status, BleException.WRITE_CHARACTERISTIC, "Phone has lost of bonding information."));
                             }
                         }
-                        if (mOnLeWriteCharacteristicListener != null) {
-                            mOnLeWriteCharacteristicListener.onFailed(
-                                    new WriteBleException(status, BleException.WRITE_CHARACTERISTIC, "Phone has lost of bonding information."));
-                        }
                     }
                 });
 
@@ -1231,10 +1218,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                                 ((OnLeWriteCharacteristicListener) leListener).onFailed(
                                         new WriteBleException(status, BleException.WRITE_CHARACTERISTIC, "Error on reading characteristic."));
                             }
-                        }
-                        if (mOnLeWriteCharacteristicListener != null) {
-                            mOnLeWriteCharacteristicListener.onFailed(
-                                    new WriteBleException(status, BleException.WRITE_CHARACTERISTIC, "Error on reading characteristic."));
                         }
                     }
                 });
@@ -1258,9 +1241,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                             if (leListener instanceof OnLeNotificationListener) {
                                 ((OnLeNotificationListener) leListener).onSuccess(characteristic);
                             }
-                        }
-                        if (mOnLeNotificationListener != null) {
-                            mOnLeNotificationListener.onSuccess(characteristic);
                         }
                     } else {
                         for (LeListener leListener : mListenerList) {
@@ -1313,21 +1293,12 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     };
 
-    void destroy() {
-        synchronized (BleManager.class) {
-            mOnLeScanListener = null;
-            mOnLeConnectListener = null;
-            mOnLeNotificationListener = null;
-            mOnLeWriteCharacteristicListener = null;
-            mOnLeReadCharacteristicListener = null;
-        }
-    }
-
-    void destroy(Object tag) {
+    @Override
+    public void destroy(Object tag) {
         cancelTag(tag);
     }
 
-    void cancelTag(Object tag) {
+    private void cancelTag(Object tag) {
         synchronized (BleManager.class) {
             List<LeListener> leListenerList = new ArrayList<>();
             for (LeListener leListener : mListenerList) {
@@ -1349,13 +1320,15 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     }
 
-    void cancelAllTag() {
+    @Override
+    public void cancelAllTag() {
         synchronized (BleManager.class) {
             mListenerList.clear();
         }
     }
 
-    void clearQueue() {
+    @Override
+    public void clearQueue() {
         synchronized (BleManager.class) {
             mRequestQueue.cancelAll();
         }
@@ -1377,14 +1350,10 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
             Request request = mRequestQueue.peek();
             switch (request.type) {
                 case WRITE:
-                    BluetoothGattCharacteristic characteristic = request.getCharacteristic();
-                    if (characteristic != null) {
-                        characteristic.setValue(request.getBytes());
-                    }
-                    writeCharacteristic(characteristic);
+                    write2Characteristic(request.getCharacteristic());
                     break;
                 case READ:
-                    readCharacteristic(request.getCharacteristic());
+                    read2Characteristic(request.getCharacteristic());
                     break;
                 case ENABLE_NOTIFICATIONS:
                     enableNotification(request.isEnable(), request.getCharacteristic());
