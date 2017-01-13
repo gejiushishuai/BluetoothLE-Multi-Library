@@ -22,7 +22,6 @@
 
 package com.github.qindachang.library;
 
-import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,13 +32,10 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelUuid;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
 import com.github.qindachang.library.exception.BleException;
 import com.github.qindachang.library.exception.ConnBleException;
@@ -54,6 +50,7 @@ import com.github.qindachang.library.scanner.ScanSettings;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -236,19 +233,81 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         mOnLeScanListener = onLeScanListener;
     }
 
-    public void scan(Activity activity, List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
+    private List<String> filterDeviceNameList = new ArrayList<>();
+    private List<String> filterDeviceAddressList = new ArrayList<>();
+    private List<UUID> filerServiceUUIDList = new ArrayList<>();
+    private int scanPeriod = 10000;
+    private int reportDelayMillis;
+
+    public BleManager setScanWithDeviceName(String deviceName) {
+        this.filterDeviceNameList.add(deviceName);
+        return this;
+    }
+
+    public BleManager setScanWithDeviceName(String[] deviceNames) {
+        Collections.addAll(this.filterDeviceNameList, deviceNames);
+        return this;
+    }
+
+    public BleManager setScanWithDeviceAddress(String deviceAddress) {
+        this.filterDeviceAddressList.add(deviceAddress);
+        return this;
+    }
+
+    public BleManager setScanWithDeviceAddress(String[] deviceAddress) {
+        Collections.addAll(this.filterDeviceAddressList, deviceAddress);
+        return this;
+    }
+
+    public BleManager setScanWithServiceUUID(String serviceUUID) {
+        setScanWithServiceUUID(UUID.fromString(serviceUUID));
+        return this;
+    }
+
+    public BleManager setScanWithServiceUUID(String[] serviceUUIDs) {
+        for (String serviceUUID : serviceUUIDs) {
+            setScanWithServiceUUID(UUID.fromString(serviceUUID));
+        }
+        return this;
+    }
+
+    public BleManager setScanWithServiceUUID(UUID serviceUUID) {
+        this.filerServiceUUIDList.add(serviceUUID);
+        return this;
+    }
+
+    public BleManager setScanWithServiceUUID(UUID[] serviceUUIDs) {
+        Collections.addAll(this.filerServiceUUIDList, serviceUUIDs);
+        return this;
+    }
+
+    public BleManager setScanPeriod(int millisecond) {
+        this.scanPeriod = millisecond;
+        return this;
+    }
+
+    public BleManager setReportDelay(int reportDelayMillis) {
+        this.reportDelayMillis = reportDelayMillis;
+        return this;
+    }
+
+    public void scan() {
+        scan(filterDeviceNameList, filterDeviceAddressList, filerServiceUUIDList, scanPeriod, reportDelayMillis);
+    }
+
+    private void scan(List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
               int scanPeriod, int reportDelayMillis) {
         BleLogger.d(enableLogger, TAG, "bluetooth le scanning...");
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                return;
-            }
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_PERMISSION_REQ_CODE);
-            return;
-        }
+//        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+//                return;
+//            }
+//            ActivityCompat.requestPermissions(activity,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+//                    REQUEST_PERMISSION_REQ_CODE);
+//            return;
+//        }
 
         stopScan();
 
@@ -308,7 +367,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
     }
 
 
-    public boolean scanning() {
+    public boolean getScanning() {
         return isScanning;
     }
 

@@ -27,12 +27,31 @@ public abstract class BleManagerImpl {
 
     public abstract boolean addLeListenerList(LeListener leListener);
 
-    public abstract void scan(Activity activity, List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
-                              int scanPeriod, int reportDelayMillis);
+    public abstract BleManager setScanWithDeviceName(String deviceName);
+
+    public abstract BleManager setScanWithDeviceName(String[] deviceNames);
+
+    public abstract BleManager setScanWithDeviceAddress(String deviceAddress);
+
+    public abstract BleManager setScanWithDeviceAddress(String[] deviceAddress);
+
+    public abstract BleManager setScanWithServiceUUID(String serviceUUID);
+
+    public abstract BleManager setScanWithServiceUUID(String[] serviceUUIDs);
+
+    public abstract BleManager setScanWithServiceUUID(UUID serviceUUID);
+
+    public abstract BleManager setScanWithServiceUUID(UUID[] serviceUUIDs);
+
+    public abstract BleManager setScanPeriod(int millisecond);
+
+    public abstract BleManager setReportDelay(int reportDelayMillis);
+
+    public abstract void scan();
 
     public abstract void stopScan();
 
-    public abstract boolean scanning();
+    public abstract boolean getScanning();
 
 
 
