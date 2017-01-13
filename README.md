@@ -1,4 +1,5 @@
-## BluetoothLE-Multi-Library
+BluetoothLE-Multi-Library
+============
 
 An Android multi connect more Bluetooth LE device's library.
 
@@ -18,11 +19,11 @@ mBleManager = BluetoothLe.getDefault();
 
 //Config BluetoothLE commands interval time. That commands will be on reference of the queue,
 //than you dosen't need to care about that waiting for previous command successfully or others.
-//Because in library very commands auto by queue.
+//Because in library every commands auto operation by queue.
 //And you can set the queue interval time what ever you want to set. Just like iOS BluetoothLE.
 BluetoothConfig config = new BluetoothConfig.Builder()
         .enableQueueInterval(true)
-        .setQueueIntervalTime(500)
+        .setQueueIntervalTime(BluetoothConfig.AUTO)
         .build();
 mBleManager.setConfig(config);
 
