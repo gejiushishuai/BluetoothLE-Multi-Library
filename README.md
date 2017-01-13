@@ -2,7 +2,7 @@
 
 An Android multi connect more Bluetooth LE device's library.
 
-if you just wanna to connect one Bluetooth-LE device, may be use this library better.
+If you just wanna to connect one Bluetooth-LE device, may be use this library better.
 [BluetoothLELibrary](https://github.com/qindachang/BluetoothLELibrary "BluetoothLELibrary")
 
 ##Example
@@ -42,6 +42,44 @@ mBleManager.enableIndicates(true, UUID_SERVICE, new UUID[]{UUID_INDICATE_1});
 //Enable true or false notifications
 mBleManager.enableNotifications(true, UUID_SERVICE, new UUID[]{UUID_NOTIFICATION_1, UUID_NOTIFICATION_2});
 ```
+
+##Listener
+
+```java
+//Every Bluetooth-LE commands status will be callback in here. Flowing listener:
+mBleManager.setOnScanListener(TAG, new OnLeScanListener() {
+    @Override
+    public void onScanResult(BluetoothDevice bluetoothDevice, int rssi, ScanRecord scanRecord) {
+
+    }
+
+    @Override
+    public void onBatchScanResults(List<ScanResult> results) {
+
+    }
+
+    @Override
+    public void onScanCompleted() {
+
+    }
+
+    @Override
+    public void onScanFailed(ScanBleException e) {
+
+    }
+});
+```
+More listener such as :
+
+```java
+mBleManager.setOnConnectListener(...)
+mBleManager.setOnNotificationListener(...)
+mBleManager.setOnIndicateListener(...)
+mBleManager.setOnWriteCharacteristicListener(...)
+mBleManager.setOnReadCharacteristicListener(...)
+mBleManager.setOnReadRssiListener(...)
+```
+
 
 ##Download
 
