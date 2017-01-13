@@ -71,8 +71,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
     private static final UUID CLIENT_CHARACTERISTIC_CONFIG_DESCRIPTOR_UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     private static final UUID PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS_UUID = UUID.fromString("00002A04-0000-1000-8000-00805f9b34fb");
 
-    private int REQUEST_PERMISSION_REQ_CODE = 888;
-
     private boolean isStopScanAfterConnected;
     private boolean isScanning;
     private boolean mConnected;
@@ -111,17 +109,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-
-    //    BleManager(Context context) {
-//        mContext = context;
-//    }
-//
-//    BleManager(Context context, BluetoothConfig config) {
-//        mContext = context;
-//        queueDelayTime = config.getQueueDelayTime();
-//        enableQueueDelay = config.getEnableQueueDelay();
-//        enableLogger = config.getEnableLogger();
-//    }
     @Override
     public void setConfig(BluetoothConfig config) {
         queueDelayTime = config.getQueueDelayTime();
@@ -304,16 +291,6 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
     private void scan(List<String> filterDeviceNameList, List<String> filterDeviceAddressList, List<UUID> filerServiceUUIDList,
                       int scanPeriod, int reportDelayMillis) {
         BleLogger.d(enableLogger, TAG, "bluetooth le scanning...");
-//        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-//                return;
-//            }
-//            ActivityCompat.requestPermissions(activity,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    REQUEST_PERMISSION_REQ_CODE);
-//            return;
-//        }
 
         stopScan();
 

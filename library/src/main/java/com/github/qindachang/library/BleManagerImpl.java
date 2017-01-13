@@ -113,4 +113,33 @@ public abstract class BleManagerImpl {
     public abstract void cancelAllTag();
 
     public abstract void clearQueue();
+
+    public void setOnScanListener(Object tag, OnLeScanListener onLeScanListener) {
+
+    }
+
+    public void setOnConnectListener(Object tag, OnLeConnectListener onConnectListener) {
+
+    }
+
+    public void setOnNotificationListener(Object tag, OnLeNotificationListener onLeNotificationListener) {
+
+    }
+
+    public void setOnIndicateListener(Object tag, OnLeIndicationListener onLeIndicationListener) {
+
+    }
+
+    public void setOnWriteCharacteristicListener(Object tag, OnLeWriteCharacteristicListener onLeWriteCharacteristicListener) {
+
+    }
+
+    public void setOnReadCharacteristicListener(Object tag, OnLeReadCharacteristicListener onLeReadCharacteristicListener) {
+
+    }
+
+    public void setOnReadRssiListener(Object tag, OnLeReadRssiListener onLeReadRssiListener) {
+
+    }
+
 }
