@@ -1,6 +1,7 @@
 package com.github.qindachang.library;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public abstract class BleManagerImpl {
 
     public abstract boolean enableBluetooth(Activity activity);
 
-    public abstract boolean enableBluetooth(Activity activity,int requestCode);
+    public abstract boolean enableBluetooth(Activity activity, int requestCode);
 
     public abstract boolean disableBluetooth();
 
@@ -52,6 +53,18 @@ public abstract class BleManagerImpl {
     public abstract void stopScan();
 
     public abstract boolean getScanning();
+
+    public abstract BleManager setStopScanAfterConnected(boolean stop);
+
+    public abstract BleManager setRetryConnectEnable(boolean retryConnectEnable);
+
+    public abstract BleManager setConnectTimeoutMillis(int connectTimeoutMillis);
+
+    public abstract BleManager setServiceTimeoutMillis(int serviceTimeoutMillis);
+
+    public abstract BleManager setRetryConnectCount(int retryConnectCount);
+
+    public abstract boolean connect(boolean autoConnect, final BluetoothDevice device);
 
 
 

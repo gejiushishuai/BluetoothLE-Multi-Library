@@ -371,8 +371,9 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         return isScanning;
     }
 
-    void setStopScanAfterConnected(boolean set) {
-        isStopScanAfterConnected = set;
+    public BleManager setStopScanAfterConnected(boolean stop) {
+        isStopScanAfterConnected = stop;
+        return this;
     }
 
     private ScanCallback scanCallback = new ScanCallback() {
@@ -415,23 +416,27 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
         }
     };
 
-    void setRetryConnectEnable(boolean retryConnectEnable) {
+    public BleManager setRetryConnectEnable(boolean retryConnectEnable) {
         mRetryConnectEnable = retryConnectEnable;
+        return this;
     }
 
-    void setConnectTimeoutMillis(int connectTimeoutMillis) {
+    public BleManager setConnectTimeoutMillis(int connectTimeoutMillis) {
         this.connectTimeoutMillis = connectTimeoutMillis;
+        return this;
     }
 
-    void setServiceTimeoutMillis(int serviceTimeoutMillis) {
+    public BleManager setServiceTimeoutMillis(int serviceTimeoutMillis) {
         this.serviceTimeoutMillis = serviceTimeoutMillis;
+        return this;
     }
 
-    void setRetryConnectCount(int retryConnectCount) {
+    public BleManager setRetryConnectCount(int retryConnectCount) {
         mRetryConnectCount = retryConnectCount;
+        return this;
     }
 
-    boolean connect(boolean autoConnect, final BluetoothDevice device) {
+    public boolean connect(boolean autoConnect, final BluetoothDevice device) {
         mAutoConnect = autoConnect;
         mBluetoothDevice = device;
         if (mBluetoothDevice == null) {
