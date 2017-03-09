@@ -1097,7 +1097,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
             if (status == BluetoothGatt.GATT_SUCCESS) {
 
                 if (characteristic.getUuid().equals(PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS_UUID)) {
-                    List<Integer> parameters = Utils.bytes2IntegerList(characteristic.getValue());
+                    List<Integer> parameters = BluetoothUtils.bytes2IntegerList(characteristic.getValue());
                     connIntervalMin = (parameters.get(1) * 16 + parameters.get(0)) * 1.25;
                     connIntervalMax = (parameters.get(3) * 16 + parameters.get(2)) * 1.25;
                     slaveLatency = parameters.get(5) * 16 + parameters.get(4);
@@ -1256,7 +1256,7 @@ import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
                     public void run() {
                         for (LeListener leListener : mListenerList) {
                             if (leListener instanceof OnLeReadRssiListener) {
-                                ((OnLeReadRssiListener) leListener).onSuccess(rssi, Utils.getDistance(rssi));
+                                ((OnLeReadRssiListener) leListener).onSuccess(rssi, BluetoothUtils.getDistance(rssi));
                             }
                         }
                     }

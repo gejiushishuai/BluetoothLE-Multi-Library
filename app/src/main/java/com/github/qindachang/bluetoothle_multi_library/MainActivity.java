@@ -16,6 +16,8 @@ import com.github.qindachang.library.OnLeReadCharacteristicListener;
 import com.github.qindachang.library.OnLeReadRssiListener;
 import com.github.qindachang.library.OnLeScanListener;
 import com.github.qindachang.library.OnLeWriteCharacteristicListener;
+import com.github.qindachang.library.conn.BluetoothLeConnector;
+import com.github.qindachang.library.conn.ConnectListener;
 import com.github.qindachang.library.exception.BleException;
 import com.github.qindachang.library.exception.ConnBleException;
 import com.github.qindachang.library.exception.ReadBleException;
@@ -49,6 +51,37 @@ public class MainActivity extends AppCompatActivity {
         //When you wanna connect second bluetooth device, example call mBleManager = BluetoothLe.getDefault(1);
         //The .getDefault(1); will return new connection object, then you can connect second bluetooth device.
         mBleManager = BluetoothLe.getDefault();
+
+        BluetoothLeConnector connector = BluetoothLeConnector.newConnector();
+        connector.connect(true, null);
+        connector.addConnectListener(new ConnectListener() {
+
+            @Override
+            public void connecting() {
+
+            }
+
+            @Override
+            public void connected() {
+
+            }
+
+            @Override
+            public void disconnect() {
+
+            }
+
+            @Override
+            public void onServiceDiscover() {
+
+            }
+
+            @Override
+            public void error() {
+
+            }
+        });
+
 
         //Config BluetoothLE commands interval time. That commands will be on reference of the queue,
         //than you dosen't need to care about that waiting for previous command successfully or others.
