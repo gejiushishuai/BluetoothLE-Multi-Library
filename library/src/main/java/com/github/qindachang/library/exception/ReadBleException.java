@@ -29,7 +29,7 @@ package com.github.qindachang.library.exception;
  * @see <a href="https://github.com/qindachang">https://github.com/qindachang</a>
  */
 
-public class ReadBleException extends BleException{
+public final class ReadBleException extends BleException{
     public ReadBleException(int status, int type, String detailMessage) {
         super(status, type, detailMessage);
     }

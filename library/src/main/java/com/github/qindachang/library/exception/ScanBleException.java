@@ -30,7 +30,7 @@ package com.github.qindachang.library.exception;
  * @see <a href="https://github.com/qindachang">https://github.com/qindachang</a>
  */
 
-public class ScanBleException extends BleException {
+public final class ScanBleException extends BleException {
 
     public ScanBleException(int status, int type) {
         this(status, type, "");

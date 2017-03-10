@@ -18,11 +18,14 @@ import com.github.qindachang.library.OnLeScanListener;
 import com.github.qindachang.library.OnLeWriteCharacteristicListener;
 import com.github.qindachang.library.conn.BluetoothLeConnector;
 import com.github.qindachang.library.conn.ConnectListener;
+import com.github.qindachang.library.conn.Listener;
 import com.github.qindachang.library.exception.BleException;
 import com.github.qindachang.library.exception.ConnBleException;
 import com.github.qindachang.library.exception.ReadBleException;
 import com.github.qindachang.library.exception.ScanBleException;
 import com.github.qindachang.library.exception.WriteBleException;
+import com.github.qindachang.library.scanner.BluetoothLeScannerCompat;
+import com.github.qindachang.library.scanner.ScanCallback;
 import com.github.qindachang.library.scanner.ScanRecord;
 import com.github.qindachang.library.scanner.ScanResult;
 
@@ -52,35 +55,8 @@ public class MainActivity extends AppCompatActivity {
         //The .getDefault(1); will return new connection object, then you can connect second bluetooth device.
         mBleManager = BluetoothLe.getDefault();
 
-        BluetoothLeConnector connector = BluetoothLeConnector.newConnector();
-        connector.connect(true, null);
-        connector.addConnectListener(new ConnectListener() {
+        BluetoothLeConnector connector = com.github.qindachang.library.conn.BluetoothLe.newConnector();
 
-            @Override
-            public void connecting() {
-
-            }
-
-            @Override
-            public void connected() {
-
-            }
-
-            @Override
-            public void disconnect() {
-
-            }
-
-            @Override
-            public void onServiceDiscover() {
-
-            }
-
-            @Override
-            public void error() {
-
-            }
-        });
 
 
         //Config BluetoothLE commands interval time. That commands will be on reference of the queue,

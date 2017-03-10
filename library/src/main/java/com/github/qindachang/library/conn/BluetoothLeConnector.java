@@ -1,32 +1,43 @@
 package com.github.qindachang.library.conn;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattCharacteristic;
+
+import com.github.qindachang.library.BluetoothConfig;
+
+import java.util.UUID;
 
 /**
  * Created by qindachang on 2017/3/9.
  */
 
-public abstract class BluetoothLeConnector {
+public interface BluetoothLeConnector {
 
-    public static BluetoothLeConnectorImpl newConnector() {
-        return new BluetoothLeConnectorImpl();
-    }
+    void setConfig(BluetoothConfig config);
 
-    public abstract boolean writeCharacteristic(BluetoothGattCharacteristic characteristic);
+    boolean writeCharacteristic(UUID serviceUUID, UUID characteristicUUID);
 
-    public abstract boolean readCharacteristic(BluetoothGattCharacteristic characteristic);
+    void addWriteCharacteristicListener(WriteCharacteristicListener writeCharacteristicListener);
 
-    public abstract void enableIndicate(boolean enable, BluetoothGattCharacteristic characteristic);
+    boolean readCharacteristic(UUID serviceUUID, UUID characteristicUUID);
 
-    public abstract void enableNotification(boolean enable, BluetoothGattCharacteristic characteristic);
+    void addReadCharacteristicListener(ReadCharacteristicListener readCharacteristicListener);
 
-    public abstract boolean connect(boolean auto, BluetoothDevice bluetoothDevice);
+    void enableIndication(boolean enable, UUID serviceUUID, UUID characteristicUUID);
 
-    public abstract void addConnectListener(ConnectListener connectListener);
+    void addIndicationListener(IndicationListener indicationListener);
 
-    public abstract void disConnect();
+    void enableNotification(boolean enable, UUID serviceUUID, UUID characteristicUUID);
 
-    public abstract void close();
+    void addNotificationListener(NotificationListener notificationListener);
+
+    boolean connect(boolean auto, BluetoothDevice bluetoothDevice);
+
+    void addConnectListener(ConnectListener connectListener);
+
+    void disconnect();
+
+    void close();
+
+    boolean removeListener(Listener listener);
 
 }
