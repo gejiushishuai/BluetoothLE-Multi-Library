@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         characteristic.setValue(int value, int formatType, int offset);
         characteristic.setValue(int mantissa, int exponent, int formatType, int offset);
         characteristic.setValue(String value);
+        connector.writeCharacteristic(characteristic);
 
         connector.readCharacteristic(UUID_SERVICE, UUID_READ);
 
