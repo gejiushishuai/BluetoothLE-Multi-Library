@@ -1,5 +1,7 @@
 package com.github.qindachang.library.conn;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+
 import com.github.qindachang.library.exception.WriteBleException;
 
 /**
@@ -7,6 +9,6 @@ import com.github.qindachang.library.exception.WriteBleException;
  */
 
 public interface WriteCharacteristicListener {
-    void onWrite();
+    void onWrited(BluetoothGattCharacteristic characteristic);
     void error(WriteBleException e);
 }

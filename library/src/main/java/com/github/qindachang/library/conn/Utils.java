@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Qin Dachang
+ * Copyright (c) 2016, Qin Dachang
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -20,37 +20,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.qindachang.library;
+package com.github.qindachang.library.conn;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BluetoothLe {
-    private static HashSet<Integer> numberSet = new HashSet<>();
-    private static HashSet<Map<Object, BleManagerImpl>> objectSet = new LinkedHashSet<>();
+/**
+ * Created on 2016/12/13.
+ *
+ * @author Qin DaChang
+ * @see <a href="https://github.com/qindachang">https://github.com/qindachang</a>
+ */
 
-    public static BleManagerImpl getDefault() {
-        return getDefault(0);
+class Utils {
+
+    static int getDistance(int rssi) {
+        int irssi = Math.abs(rssi);
+        double power = (irssi - 70.0) / (10 * 2.0);
+        power = Math.pow(10d, power);
+        power = power * 100;
+        return (int) power;
     }
 
-    public static BleManagerImpl getDefault(int deviceNumber) {
-        if (!numberSet.contains(deviceNumber)) {
-            BleManagerImpl bleManager = new BleManager();
-            Map<Object, BleManagerImpl> map = new HashMap<>();
-            map.put(deviceNumber, bleManager);
-            objectSet.add(map);
-            numberSet.add(deviceNumber);
-            return bleManager;
-        } else {
-            BleManagerImpl b = null;
-            for (Map<Object, BleManagerImpl> map : objectSet) {
-                if (map.containsKey(deviceNumber)) {
-                    b = map.get(deviceNumber);
-                }
-            }
-            return b;
+    static List<Integer> bytes2IntegerList(byte[] bytes) {
+        List<Integer> list = new ArrayList<>();
+        for (byte aByte : bytes) {
+            int v = aByte & 0xFF;
+            list.add(v);
         }
+        return list;
     }
+
 }

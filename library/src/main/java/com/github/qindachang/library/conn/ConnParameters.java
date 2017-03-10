@@ -20,7 +20,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.qindachang.library;
+package com.github.qindachang.library.conn;
 
 import android.os.Parcel;
 import android.os.Parcelable;

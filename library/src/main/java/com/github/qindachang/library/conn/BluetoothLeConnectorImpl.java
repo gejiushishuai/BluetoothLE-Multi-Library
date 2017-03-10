@@ -2,6 +2,7 @@ package com.github.qindachang.library.conn;
 
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
 
 import com.github.qindachang.library.BluetoothConfig;
 
@@ -25,8 +26,13 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
-    public boolean writeCharacteristic(UUID serviceUUID, UUID characteristicUUID) {
-        return mCommand.writeCharacteristic(serviceUUID, characteristicUUID);
+    public boolean writeCharacteristic(byte[] bytes, UUID serviceUUID, UUID characteristicUUID) {
+        return mCommand.writeCharacteristic(bytes, serviceUUID, characteristicUUID);
+    }
+
+    @Override
+    public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        return false;
     }
 
     @Override
@@ -72,6 +78,11 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     @Override
     public void addConnectListener(ConnectListener connectListener) {
         mCommand.addConnectListener(connectListener);
+    }
+
+    @Override
+    public void addRssiListener(int milliseconds, RssiListener rssiListener) {
+
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.github.qindachang.library.conn;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+
 import com.github.qindachang.library.exception.BleException;
 
 /**
@@ -7,7 +9,7 @@ import com.github.qindachang.library.exception.BleException;
  */
 
 public interface NotificationListener {
-    void onNotify();
+    void onNotify(BluetoothGattCharacteristic characteristic);
 
     void error(BleException e);
 }

@@ -37,6 +37,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelUuid;
 
+import com.github.qindachang.library.conn.BluetoothUtils;
+import com.github.qindachang.library.conn.ConnParameters;
 import com.github.qindachang.library.exception.BleException;
 import com.github.qindachang.library.exception.ConnBleException;
 import com.github.qindachang.library.exception.ReadBleException;

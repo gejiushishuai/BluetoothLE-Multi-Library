@@ -1,6 +1,7 @@
 package com.github.qindachang.library.conn;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
 
 import com.github.qindachang.library.BluetoothConfig;
 
@@ -14,7 +15,9 @@ public interface BluetoothLeConnector {
 
     void setConfig(BluetoothConfig config);
 
-    boolean writeCharacteristic(UUID serviceUUID, UUID characteristicUUID);
+    boolean writeCharacteristic(byte[] bytes, UUID serviceUUID, UUID characteristicUUID);
+
+    boolean writeCharacteristic(BluetoothGattCharacteristic characteristic);
 
     void addWriteCharacteristicListener(WriteCharacteristicListener writeCharacteristicListener);
 
@@ -33,6 +36,8 @@ public interface BluetoothLeConnector {
     boolean connect(boolean auto, BluetoothDevice bluetoothDevice);
 
     void addConnectListener(ConnectListener connectListener);
+
+    void addRssiListener(int milliseconds, RssiListener rssiListener);
 
     void disconnect();
 

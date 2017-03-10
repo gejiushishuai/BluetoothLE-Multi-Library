@@ -9,63 +9,61 @@ If you just wanna to connect one Bluetooth-LE device, may be use this library be
 ##Example
 
 ```java
-private BleManagerImpl mBleManager;
+//When you create new connection of bluetooth le , firstly newConnector object. In order to command following operation.
+private BluetoothLeConnector connector = BluetoothLe.newConnector();
+private BluetoothGatt mBluetoothGatt;
 
-//The first you reference this method for get the one BluetoothLE connection object.
-//Flowing with this object, very commands will use this object, such as write/read/indicate/notification.
-//When you wanna connect second bluetooth device, example call mBleManager = BluetoothLe.getDefault(1);
-//The .getDefault(1); will return new connection object, then you can connect second bluetooth device.
-mBleManager = BluetoothLe.getDefault();
+//Set operation config about interval time about bluetooth command.
+        connector.setConfig(new BluetoothConfig.Builder()
+                .enableQueueInterval(true)
+                .setQueueIntervalTime(BluetoothConfig.AUTO)
+                .build());
 
-//Config BluetoothLE commands interval time. That commands will be on reference of the queue,
-//than you dosen't need to care about that waiting for previous command successfully or others.
-//Because in library every commands auto operation by queue.
-//And you can set the queue interval time what ever you want to set. Just like iOS BluetoothLE.
-BluetoothConfig config = new BluetoothConfig.Builder()
-        .enableQueueInterval(true)
-        .setQueueIntervalTime(BluetoothConfig.AUTO)
-        .build();
-mBleManager.setConfig(config);
+        connector.connect(true, mBluetoothDevice);
+        connector.enableIndication(true,UUID_SERVICE,UUID_INDICATION);
+        connector.enableNotification(true, UUID_SERVICE, UUID_NOTIFICATION);
 
-//Write method have tow type, one is detail about set characteristic, the other one is just set bytes.
-BluetoothGattCharacteristic characteristic = mBleManager.getCharacteristic(UUID_SERVICE, UUID_WRITE);
-characteristic.setValue(new byte[]{1});
-mBleManager.writeCharacteristic(characteristic);
+        connector.writeCharacteristic(new byte[]{0x01, 0x02}, UUID_SERVICE, UUID_WRITE);
 
-mBleManager.writeBytesToCharacteristic(new byte[]{1, 2}, UUID_SERVICE, UUID_WRITE);
+        BluetoothGattService service = mBluetoothGatt.getService(UUID_SERVICE);
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID_WRITE);
+        characteristic.setValue(byte[] value);
+        characteristic.setValue(int value, int formatType, int offset);
+        characteristic.setValue(int mantissa, int exponent, int formatType, int offset);
+        characteristic.setValue(String value);
 
-//Read characteristic from service
-mBleManager.readCharacteristic(UUID_SERVICE, UUID_READ);
+        connector.readCharacteristic(UUID_SERVICE, UUID_READ);
 
-//Enable true or false indicates
-mBleManager.enableIndicates(true, UUID_SERVICE, new UUID[]{UUID_INDICATE_1});
+        connector.disconnect();
 
-//Enable true or false notifications
-mBleManager.enableNotifications(true, UUID_SERVICE, new UUID[]{UUID_NOTIFICATION_1, UUID_NOTIFICATION_2});
 ```
 
 ##Listener
 
 ```java
-//Every Bluetooth-LE commands status will be callback in here. Flowing listener:
-mBleManager.setOnScanListener(TAG, new OnLeScanListener() {
+connector.addConnectListener(new ConnectListener() {
     @Override
-    public void onScanResult(BluetoothDevice bluetoothDevice, int rssi, ScanRecord scanRecord) {
+    public void connecting() {
 
     }
 
     @Override
-    public void onBatchScanResults(List<ScanResult> results) {
+    public void connected() {
 
     }
 
     @Override
-    public void onScanCompleted() {
+    public void disconnected() {
 
     }
 
     @Override
-    public void onScanFailed(ScanBleException e) {
+    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+        mBluetoothGatt = gatt;
+    }
+
+   @Override
+   public void error(ConnBleException e) {
 
     }
 });
@@ -73,14 +71,20 @@ mBleManager.setOnScanListener(TAG, new OnLeScanListener() {
 More listener such as :
 
 ```java
-mBleManager.setOnConnectListener(...)
-mBleManager.setOnNotificationListener(...)
-mBleManager.setOnIndicateListener(...)
-mBleManager.setOnWriteCharacteristicListener(...)
-mBleManager.setOnReadCharacteristicListener(...)
-mBleManager.setOnReadRssiListener(...)
+mBleManager.addConnectListener(...)
+mBleManager.addNotificationListener(...)
+mBleManager.addIndicationListener(...)
+mBleManager.addWriteCharacteristicListener(...)
+mBleManager.addReadCharacteristicListener(...)
+mBleManager.addRssiListener(...)
 ```
 
+
+Remove listener:
+
+```java
+connector.removeListener(mConnectListener);
+```
 
 ##Download
 
