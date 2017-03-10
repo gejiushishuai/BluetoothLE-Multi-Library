@@ -3,6 +3,9 @@ package com.github.qindachang.library.conn;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 
 import com.github.qindachang.library.BluetoothConfig;
 
@@ -21,18 +24,18 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
-    public void setConfig(BluetoothConfig config) {
+    public void setConfig(@NonNull BluetoothConfig config) {
         mCommand.setConfig(config);
     }
 
     @Override
-    public boolean writeCharacteristic(byte[] bytes, UUID serviceUUID, UUID characteristicUUID) {
+    public boolean writeCharacteristic(byte[] bytes,@NonNull  UUID serviceUUID,@NonNull  UUID characteristicUUID) {
         return mCommand.writeCharacteristic(bytes, serviceUUID, characteristicUUID);
     }
 
     @Override
     public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
-        return false;
+        return mCommand.write(characteristic);
     }
 
     @Override
@@ -41,7 +44,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
-    public boolean readCharacteristic(UUID serviceUUID, UUID characteristicUUID) {
+    public boolean readCharacteristic(@NonNull UUID serviceUUID,@NonNull  UUID characteristicUUID) {
         return mCommand.readCharacteristic(serviceUUID, characteristicUUID);
     }
 
@@ -51,7 +54,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
-    public void enableIndication(boolean enable, UUID serviceUUID, UUID characteristicUUID) {
+    public void enableIndication(boolean enable,@NonNull  UUID serviceUUID,@NonNull  UUID characteristicUUID) {
         mCommand.enableIndication(enable, serviceUUID, characteristicUUID);
     }
 
@@ -61,7 +64,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
-    public void enableNotification(boolean enable, UUID serviceUUID, UUID characteristicUUID) {
+    public void enableNotification(boolean enable,@NonNull  UUID serviceUUID,@NonNull  UUID characteristicUUID) {
         mCommand.enableNotification(enable, serviceUUID, characteristicUUID);
     }
 
@@ -71,8 +74,14 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
-    public boolean connect(boolean auto, BluetoothDevice bluetoothDevice) {
-        return mCommand.connect(auto, bluetoothDevice);
+    public boolean connect(boolean autoConnect, @NonNull BluetoothDevice bluetoothDevice) {
+        return mCommand.connect(autoConnect, bluetoothDevice);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public boolean connect(boolean autoConnect,@NonNull  BluetoothDevice bluetoothDevice, int TRANSPORT) {
+        return mCommand.connect(autoConnect, bluetoothDevice, TRANSPORT);
     }
 
     @Override
@@ -98,5 +107,10 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     @Override
     public boolean removeListener(Listener listener) {
         return mCommand.removeListener(listener);
+    }
+
+    @Override
+    public BluetoothDevice getBluetoothDevice() {
+        return mCommand.getBluetoothDevice();
     }
 }

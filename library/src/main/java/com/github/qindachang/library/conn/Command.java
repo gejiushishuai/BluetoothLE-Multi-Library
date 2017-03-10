@@ -5,10 +5,14 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 
 import com.github.qindachang.library.BluetoothConfig;
+import com.github.qindachang.library.exception.BleException;
+import com.github.qindachang.library.exception.ConnBleException;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -21,7 +25,9 @@ import java.util.UUID;
  */
 
 class Command {
-
+    private boolean mConnected;
+    private BluetoothDevice mBluetoothDevice;
+    private BluetoothGatt mBluetoothGatt;
     private Set<Listener> mListeners = new LinkedHashSet<>();
 
     BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -85,7 +91,6 @@ class Command {
     }
 
 
-
     boolean readCharacteristic(UUID serviceUUID, UUID characteristicUUID) {
         return false;
     }
@@ -97,14 +102,31 @@ class Command {
     }
 
     boolean connect(boolean auto, BluetoothDevice bluetoothDevice) {
-        return false;
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
+            mConnected = false;
+        }
+        mBluetoothGatt = bluetoothDevice.connectGatt(null, auto, mGattCallback);
+        return mBluetoothGatt != null;
+    }
+
+    @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
+    boolean connect(boolean auto, BluetoothDevice bluetoothDevice, int TRANSPORT) {
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
+            mConnected = false;
+        }
+        mBluetoothGatt = bluetoothDevice.connectGatt(null, auto, mGattCallback, TRANSPORT);
+        return mBluetoothGatt != null;
     }
 
     void addConnectListener(ConnectListener connectListener) {
         mListeners.add(connectListener);
     }
 
-    void addRssiListener(int millisecond,RssiListener rssiListener) {
+    void addRssiListener(int millisecond, RssiListener rssiListener) {
         mListeners.add(rssiListener);
     }
 
@@ -114,14 +136,15 @@ class Command {
 
     void close() {
         mListeners.clear();
+        mBluetoothDevice = null;
     }
 
     boolean removeListener(Listener listener) {
         return mListeners.remove(listener);
     }
 
-    private void write(BluetoothGattCharacteristic characteristic) {
-
+    boolean write(BluetoothGattCharacteristic characteristic) {
+        return false;
     }
 
     private void read(BluetoothGattCharacteristic characteristic) {
@@ -134,6 +157,10 @@ class Command {
 
     private void indication(boolean enable, BluetoothGattCharacteristic characteristic) {
 
+    }
+
+    BluetoothDevice getBluetoothDevice() {
+        return mBluetoothDevice;
     }
 
     private boolean enableQueueDelay;

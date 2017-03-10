@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         connector.connect(true, mBluetoothDevice);
+        connector.connect(true, mBluetoothDevice, BluetoothLeConnector.TRANSPORT_AUTO);
         connector.enableIndication(true,UUID_SERVICE,UUID_INDICATION);
         connector.enableNotification(true, UUID_SERVICE, UUID_NOTIFICATION);
 
@@ -76,10 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         BluetoothGattService service = mBluetoothGatt.getService(UUID_SERVICE);
         BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID_WRITE);
-        characteristic.setValue(byte[] value);
-        characteristic.setValue(int value, int formatType, int offset);
-        characteristic.setValue(int mantissa, int exponent, int formatType, int offset);
-        characteristic.setValue(String value);
+        characteristic.setValue(new byte[]{});
         connector.writeCharacteristic(characteristic);
 
         connector.readCharacteristic(UUID_SERVICE, UUID_READ);
@@ -114,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         public void error(ConnBleException e) {
 
         }
-    }
+    };
 
     @Override
     protected void onDestroy() {
