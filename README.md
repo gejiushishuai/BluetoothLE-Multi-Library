@@ -6,7 +6,56 @@ An Android multi connect more Bluetooth LE device's library.
 If you just wanna to connect one Bluetooth-LE device, may be use this library better.
 [BluetoothLELibrary](https://github.com/qindachang/BluetoothLELibrary "BluetoothLELibrary")
 
-##Example
+## Example
+
+### scan
+
+```java
+BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
+ScanSettings scanSettings = new ScanSettings.Builder()
+    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+    .setReportDelay(int reportDelayMillis) //0 or above >0
+    .setUseHardwareBatchingIfSupported(false)
+    .build();
+
+List<ScanFilter> filters = new ArrayList<>();
+
+ScanFilter builder = new ScanFilter.Builder().setDeviceName(deviceName).build();
+filters.add(builder);
+
+ScanFilter builder = new ScanFilter.Builder().setDeviceAddress(deviceAddress).build();
+filters.add(builder);
+
+ScanFilter builder = new ScanFilter.Builder()
+                    .setServiceUuid(ParcelUuid.fromString(serviceUUID.toString())).build();
+filters.add(builder);
+
+scannerCompat.startScan(filters, scanSettings, scanCallback);
+
+```
+
+```java
+private ScanCallback scanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(final int callbackType, final ScanResult result) {
+
+        }
+
+        @Override
+        public void onBatchScanResults(final List<ScanResult> results) {
+
+        }
+
+        @Override
+        public void onScanFailed(final int errorCode) {
+
+        }
+};
+```
+
+
+
+### connection
 
 ```java
 //When you create new connection of bluetooth le , firstly newConnector object. In order to command following operation.
@@ -20,6 +69,7 @@ private BluetoothGatt mBluetoothGatt;
                 .build());
 
         connector.connect(true, mBluetoothDevice);
+//        connector.connect(true, mBluetoothDevice, BluetoothLeConnector.TRANSPORT_AUTO);
         connector.enableIndication(true,UUID_SERVICE,UUID_INDICATION);
         connector.enableNotification(true, UUID_SERVICE, UUID_NOTIFICATION);
 
@@ -39,7 +89,7 @@ private BluetoothGatt mBluetoothGatt;
 
 ```
 
-##Listener
+## Listener
 
 ```java
 connector.addConnectListener(new ConnectListener() {
@@ -87,10 +137,10 @@ Remove listener:
 connector.removeListener(mConnectListener);
 ```
 
-##Download
+## Download
 
     dependencies {
-      compile ''
+      compile 'will be come soon..'
     }
 
 

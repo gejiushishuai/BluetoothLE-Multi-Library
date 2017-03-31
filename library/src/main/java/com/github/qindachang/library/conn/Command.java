@@ -268,7 +268,9 @@ class Command {
             mHandler.post(runnable);
         }
     }
+
     private RequestQueue mRequestQueue = new RequestQueue();
+
     private class RequestQueue {
 
         private Queue<CommandQueue> mCommandQueue = new LinkedList<>();
