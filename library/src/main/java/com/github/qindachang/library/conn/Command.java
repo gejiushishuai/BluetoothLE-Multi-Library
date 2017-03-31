@@ -8,16 +8,17 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 
 import com.github.qindachang.library.BluetoothConfig;
 import com.github.qindachang.library.exception.BleException;
-import com.github.qindachang.library.exception.ConnBleException;
+import com.github.qindachang.library.exception.WriteBleException;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 /**
@@ -25,7 +26,10 @@ import java.util.UUID;
  */
 
 class Command {
+
     private boolean mConnected;
+    private int mRssiIntervalMilliSecond;
+
     private BluetoothDevice mBluetoothDevice;
     private BluetoothGatt mBluetoothGatt;
     private Set<Listener> mListeners = new LinkedHashSet<>();
@@ -34,6 +38,7 @@ class Command {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
+
         }
 
         @Override
@@ -90,15 +95,30 @@ class Command {
         return false;
     }
 
+    public void addWriteCharacteristicListener(WriteCharacteristicListener writeCharacteristicListener) {
+        mListeners.add(writeCharacteristicListener);
+    }
 
     boolean readCharacteristic(UUID serviceUUID, UUID characteristicUUID) {
         return false;
     }
 
+    public void addReadCharacteristicListener(ReadCharacteristicListener readCharacteristicListener) {
+        mListeners.add(readCharacteristicListener);
+    }
+
     void enableIndication(boolean enable, UUID serviceUUID, UUID characteristicUUID) {
     }
 
+    public void addIndicationListener(IndicationListener indicationListener) {
+        mListeners.add(indicationListener);
+    }
+
     void enableNotification(boolean enable, UUID serviceUUID, UUID characteristicUUID) {
+    }
+
+    public void addNotificationListener(NotificationListener notificationListener) {
+        mListeners.add(notificationListener);
     }
 
     boolean connect(boolean auto, BluetoothDevice bluetoothDevice) {
@@ -119,6 +139,9 @@ class Command {
             mConnected = false;
         }
         mBluetoothGatt = bluetoothDevice.connectGatt(null, auto, mGattCallback, TRANSPORT);
+        if (mBluetoothGatt != null) {
+            mBluetoothDevice = bluetoothDevice;
+        }
         return mBluetoothGatt != null;
     }
 
@@ -127,16 +150,53 @@ class Command {
     }
 
     void addRssiListener(int millisecond, RssiListener rssiListener) {
+        mRssiIntervalMilliSecond = millisecond;
         mListeners.add(rssiListener);
+        readRssiTimerTask();
+    }
+
+    private Timer mTimer;
+    private TimerTask mTimerTask;
+
+    private void readRssiTimerTask() {
+        stopReadRssi();
+        mTimer = null;
+        mTimerTask = null;
+        mTimer = new Timer();
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.readRemoteRssi();
+                }
+            }
+        };
+        mTimer.schedule(mTimerTask, 100, mRssiIntervalMilliSecond);
+    }
+
+    void stopReadRssi() {
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+        if (mTimerTask != null) {
+            mTimerTask.cancel();
+            mTimerTask = null;
+        }
     }
 
     void disconnect() {
-
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.disconnect();
+            mBluetoothDevice = null;
+        }
     }
 
     void close() {
         mListeners.clear();
         mBluetoothDevice = null;
+        mBluetoothGatt.close();
+        mBluetoothGatt = null;
     }
 
     boolean removeListener(Listener listener) {
@@ -144,7 +204,28 @@ class Command {
     }
 
     boolean write(BluetoothGattCharacteristic characteristic) {
-        return false;
+        final BluetoothGatt gatt = mBluetoothGatt;
+        if (gatt == null) {
+            for (Listener listener : mListeners) {
+                if (listener instanceof WriteCharacteristicListener) {
+                    ((WriteCharacteristicListener) listener).error(
+                            new WriteBleException(233, BleException.WRITE_CHARACTERISTIC,
+                                    "BluetoothGatt object is null. check connect status or onServicesDiscovered.")
+                    );
+                }
+            }
+            mRequestQueue.next();
+            return false;
+        }
+        if (characteristic == null) {
+
+            return false;
+        }
+        final int properties = characteristic.getProperties();
+        if ((properties & (BluetoothGattCharacteristic.PROPERTY_WRITE | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) == 0) {
+            return false;
+        }
+        return gatt.writeCharacteristic(characteristic);
     }
 
     private void read(BluetoothGattCharacteristic characteristic) {
@@ -159,8 +240,16 @@ class Command {
 
     }
 
+    public void clearQueue() {
+        mRequestQueue.cancelAll();
+    }
+
     BluetoothDevice getBluetoothDevice() {
         return mBluetoothDevice;
+    }
+
+    boolean getConnected() {
+        return mConnected;
     }
 
     private boolean enableQueueDelay;
@@ -179,7 +268,7 @@ class Command {
             mHandler.post(runnable);
         }
     }
-
+    private RequestQueue mRequestQueue = new RequestQueue();
     private class RequestQueue {
 
         private Queue<CommandQueue> mCommandQueue = new LinkedList<>();

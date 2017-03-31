@@ -40,7 +40,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
 
     @Override
     public void addWriteCharacteristicListener(WriteCharacteristicListener writeCharacteristicListener) {
-
+        mCommand.addWriteCharacteristicListener(writeCharacteristicListener);
     }
 
     @Override
@@ -50,7 +50,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
 
     @Override
     public void addReadCharacteristicListener(ReadCharacteristicListener readCharacteristicListener) {
-
+        mCommand.addReadCharacteristicListener(readCharacteristicListener);
     }
 
     @Override
@@ -60,7 +60,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
 
     @Override
     public void addIndicationListener(IndicationListener indicationListener) {
-
+        mCommand.addIndicationListener(indicationListener);
     }
 
     @Override
@@ -70,7 +70,7 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
 
     @Override
     public void addNotificationListener(NotificationListener notificationListener) {
-
+        mCommand.addNotificationListener(notificationListener);
     }
 
     @Override
@@ -91,7 +91,12 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
 
     @Override
     public void addRssiListener(int milliseconds, RssiListener rssiListener) {
+        mCommand.addRssiListener(milliseconds, rssiListener);
+    }
 
+    @Override
+    public void stopReadRssi() {
+        mCommand.stopReadRssi();
     }
 
     @Override
@@ -110,7 +115,17 @@ class BluetoothLeConnectorImpl implements BluetoothLeConnector {
     }
 
     @Override
+    public void clearQueue() {
+        mCommand.clearQueue();
+    }
+
+    @Override
     public BluetoothDevice getBluetoothDevice() {
         return mCommand.getBluetoothDevice();
+    }
+
+    @Override
+    public boolean getConnected() {
+        return mCommand.getConnected();
     }
 }

@@ -8,7 +8,7 @@ import com.github.qindachang.library.exception.BleException;
  * Created by qindachang on 2017/3/10.
  */
 
-public interface IndicationListener {
+public interface IndicationListener extends Listener {
     void onIndicate(BluetoothGattCharacteristic characteristic);
 
     void error(BleException e);

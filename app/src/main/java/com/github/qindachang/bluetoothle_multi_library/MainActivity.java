@@ -12,6 +12,7 @@ import com.github.qindachang.library.BluetoothConfig;
 import com.github.qindachang.library.conn.BluetoothLe;
 import com.github.qindachang.library.conn.BluetoothLeConnector;
 import com.github.qindachang.library.conn.ConnectListener;
+import com.github.qindachang.library.conn.RssiListener;
 import com.github.qindachang.library.exception.ConnBleException;
 
 import java.util.UUID;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         connector.connect(true, mBluetoothDevice);
-        connector.connect(true, mBluetoothDevice, BluetoothLeConnector.TRANSPORT_AUTO);
+//        connector.connect(true, mBluetoothDevice, BluetoothLeConnector.TRANSPORT_AUTO);
         connector.enableIndication(true,UUID_SERVICE,UUID_INDICATION);
         connector.enableNotification(true, UUID_SERVICE, UUID_NOTIFICATION);
 
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         connector.disconnect();
 
         connector.removeListener(mConnectListener);
+
+
     }
 
     private ConnectListener mConnectListener = new ConnectListener() {
