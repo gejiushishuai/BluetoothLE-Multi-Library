@@ -10,5 +10,6 @@ import com.github.qindachang.library.exception.WriteBleException;
 
 public interface WriteCharacteristicListener extends Listener {
     void onWrited(BluetoothGattCharacteristic characteristic);
+
     void error(WriteBleException e);
 }

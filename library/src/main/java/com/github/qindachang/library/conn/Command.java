@@ -5,12 +5,15 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattServerCallback;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.github.qindachang.library.BluetoothConfig;
+import com.github.qindachang.library.OnLeReadCharacteristicListener;
 import com.github.qindachang.library.exception.BleException;
+import com.github.qindachang.library.exception.ReadBleException;
 import com.github.qindachang.library.exception.WriteBleException;
 
 import java.util.LinkedHashSet;
@@ -205,16 +208,7 @@ class Command {
 
     boolean write(BluetoothGattCharacteristic characteristic) {
         final BluetoothGatt gatt = mBluetoothGatt;
-        if (gatt == null) {
-            for (Listener listener : mListeners) {
-                if (listener instanceof WriteCharacteristicListener) {
-                    ((WriteCharacteristicListener) listener).error(
-                            new WriteBleException(233, BleException.WRITE_CHARACTERISTIC,
-                                    "BluetoothGatt object is null. check connect status or onServicesDiscovered.")
-                    );
-                }
-            }
-            mRequestQueue.next();
+        if (checkGattNull(gatt)) {
             return false;
         }
         if (characteristic == null) {
@@ -229,6 +223,7 @@ class Command {
     }
 
     private void read(BluetoothGattCharacteristic characteristic) {
+        final BluetoothGatt gatt = mBluetoothGatt;
 
     }
 
@@ -251,6 +246,40 @@ class Command {
     boolean getConnected() {
         return mConnected;
     }
+
+    private boolean checkGattNull(BluetoothGatt gatt) {
+        if (gatt == null) {
+            for (Listener listener : mListeners) {
+                if (listener instanceof WriteCharacteristicListener) {
+                    ((WriteCharacteristicListener) listener).error(
+                            new WriteBleException(233, BleException.WRITE_CHARACTERISTIC,
+                                    "BluetoothGatt object is null. check connect status or onServicesDiscovered.")
+                    );
+                }
+            }
+            mRequestQueue.next();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkCharacteristicNull(BluetoothGattCharacteristic characteristic) {
+        if (characteristic == null) {
+            for (Listener listener : mListeners) {
+                if (listener instanceof OnLeReadCharacteristicListener) {
+                    ((OnLeReadCharacteristicListener) listener).onFailure(
+                            new ReadBleException(233, BleException.READ_CHARACTERISTIC,
+                                    "characteristic uuid is null.")
+                    );
+                }
+            }
+            mRequestQueue.next();
+            return true;
+        }
+        return false;
+    }
+
+
 
     private boolean enableQueueDelay;
     private int queueDelayTime;

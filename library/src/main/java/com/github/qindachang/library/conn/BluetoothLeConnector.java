@@ -67,20 +67,32 @@ public interface BluetoothLeConnector {
      */
     void addRssiListener(int milliseconds, RssiListener rssiListener);
 
+    /**
+     * Stop to read bluetooth rssi, and it will be remove that listener.
+     */
     void stopReadRssi();
 
     void disconnect();
 
+    /**
+     * Close the bluetooth GATT connection. The GATT resource will be free.
+     */
     void close();
 
     boolean removeListener(Listener listener);
 
     /**
-     * Clear command queue.
+     * Clear Bluetooth operation queue.
      */
     void clearQueue();
 
+    /**
+     * Returns the connected Bluetooth device object.
+     */
     BluetoothDevice getBluetoothDevice();
 
+    /**
+     * Get Bluetooth connection status.
+     */
     boolean getConnected();
 }
