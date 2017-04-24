@@ -270,11 +270,9 @@ mGattServer.addService(serviceSettings);
 如果项目对你有用，希望捐助老夫一杯咖啡钱鼓励一下。
 
 
-![zhifubao](https://github.com/qindachang/BluetoothLE-Multi-Library/blob/master/app/src/main/res/drawable/1493027354101.jpg)
+<img src="https://github.com/qindachang/BluetoothLE-Multi-Library/blob/master/app/src/main/res/drawable/1493027354101.jpg" width = "320" height = "568" alt="支付宝" align=center />
 
-![weixin](https://github.com/qindachang/BluetoothLE-Multi-Library/blob/master/app/src/main/res/drawable/mm_facetoface_collect_qrcode_1493027197205.png)
-
-
+<img src="https://github.com/qindachang/BluetoothLE-Multi-Library/blob/master/app/src/main/res/drawable/mm_facetoface_collect_qrcode_1493027197205.png" width = "320" height = "568" alt="微信" align=center />
 
 ## Download
 
