@@ -1,12 +1,11 @@
 BluetoothLE-Multi-Library
 ============
 
-一个能够连接多台蓝牙设备的库，它可以作为client端，也可以为server端。支持主机／从机，外围设备连接。
+一个能够连接多台蓝牙设备的库，它可以作为client端，也可以为server端。支持主机／从机，外围设备连接。    
+在发送消息时，它内部支持队列控制，避免因蓝牙间隔出现操作失败的情况。
 
-If you just wanna to connect one Bluetooth-LE device, may be use this library better.
-[BluetoothLELibrary](https://github.com/qindachang/BluetoothLELibrary "BluetoothLELibrary")
 
-## Example
+## 开始使用
 
 ### scan
 
@@ -167,6 +166,7 @@ mGattServer.closeServer();
 ```java
 List<ServiceProfile> list = new ArrayList<>();
 
+//设置一个写的特征
 ServiceProfile profile = new ServiceProfile();
 profile.setCharacteristicUuid(UUID.fromString("0000fff3-0000-1000-8000-00805f9b34fb"));
 profile.setCharacteristicProperties(BluetoothGattCharacteristic.PROPERTY_WRITE);
@@ -176,6 +176,7 @@ profile.setDescriptorPermission(BluetoothGattDescriptor.PERMISSION_READ);
 profile.setDescriptorValue(new byte[]{0});
 list.add(profile);
 
+//设置一个读的特征
 ServiceProfile profile1 = new ServiceProfile();
 profile1.setCharacteristicUuid(UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb"));
 profile1.setCharacteristicProperties(BluetoothGattCharacteristic.PROPERTY_READ);
@@ -185,6 +186,7 @@ profile1.setDescriptorPermission(BluetoothGattDescriptor.PERMISSION_READ);
 profile1.setDescriptorValue(new byte[]{1});
 list.add(profile1);
 
+//设置一个notify通知
 ServiceProfile profile2 = new ServiceProfile();
 profile2.setCharacteristicUuid(UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb"));
 profile2.setCharacteristicProperties(BluetoothGattCharacteristic.PROPERTY_NOTIFY);
@@ -195,9 +197,9 @@ profile2.setDescriptorValue(new byte[]{1});
 list.add(profile2);
 
 final ServiceSettings serviceSettings = new ServiceSettings.Builder()
-        .setServiceUuid(UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb"))
+        .setServiceUuid(UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb"))//服务uuid
         .setServiceType(BluetoothGattService.SERVICE_TYPE_PRIMARY)
-        .addServiceProfiles(list)
+        .addServiceProfiles(list)//上述设置添加到该服务里
         .build();
 
 mGattServer.addService(serviceSettings);
@@ -264,6 +266,8 @@ mGattServer.addService(serviceSettings);
                 setContentText("设备写入描述请求 ： device = " + device.getAddress() + ", descriptor uuid = " + descriptor.getUuid().toString() + ", value = " + Arrays.toString(value));
             }
         });
+        
+如果项目对你有用，希望捐助老夫一杯咖啡钱鼓励一下。
 
 
 ## Download
