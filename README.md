@@ -1,5 +1,5 @@
-BluetoothLE-Multi-Library
-============
+#BluetoothLE-Multi-Library
+
 
 一个能够连接多台蓝牙设备的库，它可以作为client端，也可以为server端。支持主机／从机，外围设备连接。    
 在发送消息时，它内部支持队列控制，避免因蓝牙间隔出现操作失败的情况。
@@ -7,7 +7,9 @@ BluetoothLE-Multi-Library
 
 ## 开始使用
 
-### scan
+### 1. 主机client
+
+### 扫描
 
 ```java
 BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
@@ -16,7 +18,8 @@ ScanSettings scanSettings = new ScanSettings.Builder()
     .setReportDelay(int reportDelayMillis) //0 or above >0
     .setUseHardwareBatchingIfSupported(false)
     .build();
-
+    
+//设置过滤扫描
 List<ScanFilter> filters = new ArrayList<>();
 
 ScanFilter builder = new ScanFilter.Builder().setDeviceName(deviceName).build();
@@ -32,6 +35,8 @@ filters.add(builder);
 scannerCompat.startScan(filters, scanSettings, scanCallback);
 
 ```
+
+扫描回调
 
 ```java
 private ScanCallback scanCallback = new ScanCallback() {
@@ -54,26 +59,28 @@ private ScanCallback scanCallback = new ScanCallback() {
 
 
 
-### connection
+### 连接
 
 ```java
-//When you create new connection of bluetooth le , firstly newConnector object. In order to command following operation.
+//创建连接的一个对象，后续将使用该对象来访问操作
 private BluetoothLeConnector connector = BluetoothLe.newConnector();
 private BluetoothGatt mBluetoothGatt;
 
-//Set operation config about interval time about bluetooth command.
+        //配置连接对象
         connector.setConfig(new BluetoothConfig.Builder()
-                .enableQueueInterval(true)
-                .setQueueIntervalTime(BluetoothConfig.AUTO)
+                .enableQueueInterval(true)//开启操作时间间隔
+                .setQueueIntervalTime(BluetoothConfig.AUTO)//单位ms，这里为自动
                 .build());
-
+        //连接蓝牙
         connector.connect(true, mBluetoothDevice);
-//        connector.connect(true, mBluetoothDevice, BluetoothLeConnector.TRANSPORT_AUTO);
+        connector.connect(true, mBluetoothDevice, BluetoothLeConnector.TRANSPORT_AUTO);//最后一个参数设置连接通道
+        //开启indicate通知
         connector.enableIndication(true,UUID_SERVICE,UUID_INDICATION);
+        //开启notify通知
         connector.enableNotification(true, UUID_SERVICE, UUID_NOTIFICATION);
-
+        //写数据
         connector.writeCharacteristic(new byte[]{0x01, 0x02}, UUID_SERVICE, UUID_WRITE);
-
+        //自定义写数据
         BluetoothGattService service = mBluetoothGatt.getService(UUID_SERVICE);
         BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID_WRITE);
         characteristic.setValue(byte[] value);
@@ -81,17 +88,20 @@ private BluetoothGatt mBluetoothGatt;
         characteristic.setValue(int mantissa, int exponent, int formatType, int offset);
         characteristic.setValue(String value);
         connector.writeCharacteristic(characteristic);
-
+        //读数据
         connector.readCharacteristic(UUID_SERVICE, UUID_READ);
-
+        //断开连接
         connector.disconnect();
+        //关闭gatt
+        connector.close();
 
 ```
 
-## Listener
+### 回调监听 
 
 ```java
-connector.addConnectListener(new ConnectListener() {
+//连接状态监听
+private ConnectListener mConnectListener = new ConnectListener() {
     @Override
     public void connecting() {
 
@@ -109,16 +119,17 @@ connector.addConnectListener(new ConnectListener() {
 
     @Override
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-        mBluetoothGatt = gatt;
-    }
-
-   @Override
-   public void error(ConnBleException e) {
 
     }
-});
+
+    @Override
+    public void error(ConnBleException e) {
+
+    }
+};
+connector.addConnectListener(mConnectListener);
 ```
-More listener such as :
+更多的回调监听如下:
 
 ```java
 mBleManager.addConnectListener(...)
@@ -130,38 +141,47 @@ mBleManager.addRssiListener(...)
 ```
 
 
-Remove listener:
+移除回调监听（好的程序员要懂避免内存泄漏）:
 
 ```java
 connector.removeListener(mConnectListener);
 ```
 
-## GattServer
+---
 
-### Advertising
+### 2. 从机Server
+
+### 广播
 
 ```java
 private GattServer mGattServer = new GattServer();
 
-mGattServer.startAdvertising(UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb"));
+mGattServer.startAdvertising(UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb"));//该uuid可提供给主机client过滤扫描
 
 mGattServer.stopAdvertising();
 ```
 
-### Server
+### 伺服器server
 
-1. startServer
+##### 1. 启动startServer
+
 
 ```java
 mGattServer.startServer(context);
 ```
 
-2. closeServer
+
+##### 2. 关闭closeServer
+
+
 
 ```java
 mGattServer.closeServer();
 ```
-3. addService
+
+##### 3. 添加服务addService
+
+
 
 ```java
 List<ServiceProfile> list = new ArrayList<>();
@@ -206,8 +226,9 @@ mGattServer.addService(serviceSettings);
 ```
 
 
-### Listener
+### 回调监听
 
+```java
         mGattServer.setOnAdvertiseListener(new OnAdvertiseListener() {
             @Override
             public void onStartSuccess(AdvertiseSettings settingsInEffect) {
@@ -266,13 +287,11 @@ mGattServer.addService(serviceSettings);
                 setContentText("设备写入描述请求 ： device = " + device.getAddress() + ", descriptor uuid = " + descriptor.getUuid().toString() + ", value = " + Arrays.toString(value));
             }
         });
-        
-如果项目对你有用，希望捐助老夫一杯咖啡钱鼓励一下。
 
-
-<img src="https://github.com/qindachang/BluetoothLE-Multi-Library/blob/master/app/src/main/res/drawable/1493027354101.jpg" width = "320" height = "484" alt="支付宝" align=center />
-
-<img src="https://github.com/qindachang/BluetoothLE-Multi-Library/blob/master/app/src/main/res/drawable/mm_facetoface_collect_qrcode_1493027197205.png" width = "320" height = "422" alt="微信" align=center />
+```
+    
+---        
+   
 
 ## Download
 
